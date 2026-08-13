@@ -48,6 +48,7 @@ fun HomeScreen(
     notes: List<Note>,
     userPreferences: UserPreferences,
     authManager: AuthManager,
+    onNavigateToAuth: () -> Unit,
     onAddNote: () -> Unit,
     onNoteClick: (Note) -> Unit,
     onEraseAll: () -> Unit
@@ -59,7 +60,27 @@ fun HomeScreen(
     var searchQuery by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
     var currentUser by remember { mutableStateOf(authManager.currentUser) }
-
+    
+    androidx.compose.runtime.DisposableEffect(Unit) {
+        var listener: com.google.firebase.auth.FirebaseAuth.AuthStateListener? = null
+        try {
+            listener = com.google.firebase.auth.FirebaseAuth.AuthStateListener { auth ->
+                currentUser = auth.currentUser
+            }
+            com.google.firebase.auth.FirebaseAuth.getInstance().addAuthStateListener(listener!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        onDispose {
+            try {
+                listener?.let {
+                    com.google.firebase.auth.FirebaseAuth.getInstance().removeAuthStateListener(it)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
     Scaffold(
         topBar = {
             if (currentTab == "Notes" || currentTab == "Vault") {
@@ -108,12 +129,7 @@ fun HomeScreen(
                                         .background(MaterialTheme.colorScheme.primary)
                                         .clickable {
                                             if (currentUser == null) {
-                                                scope.launch {
-                                                    val success = authManager.signInWithGoogle()
-                                                    if (success) {
-                                                        currentUser = authManager.currentUser
-                                                    }
-                                                }
+                                                onNavigateToAuth()
                                             }
                                         },
                                     contentAlignment = Alignment.Center
@@ -213,7 +229,8 @@ fun HomeScreen(
                 )
             }
             "Cloud" -> {
-                CloudContent(modifier = Modifier.padding(paddingValues), notes = notes, onNoteClick = onNoteClick)
+                CloudContent(
+                    modifier = Modifier.padding(paddingValues), notes = notes, onNoteClick = onNoteClick)
             }
             "Vault" -> {
                 VaultContent(
@@ -223,12 +240,14 @@ fun HomeScreen(
                     userPreferences = userPreferences,
                     authManager = authManager,
                     onNoteClick = onNoteClick,
+                    onNavigateToAuth = onNavigateToAuth,
                     modifier = Modifier.padding(paddingValues),
                     onAuthChange = { currentUser = authManager.currentUser }
                 )
             }
             "Setup" -> {
                 SetupContent(
+                    onNavigateToAuth = onNavigateToAuth,
                     modifier = Modifier.padding(paddingValues), 
                     notes = notes,
                     userPreferences = userPreferences, 
@@ -454,6 +473,7 @@ fun VaultContent(
     userPreferences: com.hyper.note.android.data.UserPreferences,
     authManager: AuthManager,
     onNoteClick: (Note) -> Unit,
+    onNavigateToAuth: () -> Unit,
     modifier: Modifier = Modifier,
     onAuthChange: () -> Unit
 ) {
@@ -478,14 +498,7 @@ fun VaultContent(
             Button(
                 onClick = {
                     isAuthenticating = true
-                    scope.launch {
-                        val success = authManager.signInWithGoogle()
-                        if (success) {
-                            isAuthenticated = true
-                            onAuthChange()
-                        }
-                        isAuthenticating = false
-                    }
+                    onNavigateToAuth()
                 },
                 enabled = !isAuthenticating
             ) {
@@ -510,7 +523,7 @@ fun VaultContent(
 }
 
 @Composable
-fun SetupContent(modifier: Modifier = Modifier, notes: List<Note>, userPreferences: UserPreferences, authManager: AuthManager, currentUser: com.google.firebase.auth.FirebaseUser?, onAuthChange: () -> Unit, onEraseAll: () -> Unit) {
+fun SetupContent(modifier: Modifier = Modifier, notes: List<Note>, userPreferences: UserPreferences, authManager: AuthManager, currentUser: com.google.firebase.auth.FirebaseUser?, onAuthChange: () -> Unit, onEraseAll: () -> Unit, onNavigateToAuth: () -> Unit) {
     val address by userPreferences.address.collectAsState()
     val appSecurityEnabled by userPreferences.appSecurityEnabled.collectAsState()
     val encryptionKey by userPreferences.encryptionKey.collectAsState()
@@ -541,10 +554,7 @@ fun SetupContent(modifier: Modifier = Modifier, notes: List<Note>, userPreferenc
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(
                         onClick = { 
-                            scope.launch {
-                                val success = authManager.signInWithGoogle()
-                                if (success) onAuthChange()
-                            }
+                            onNavigateToAuth()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary)
                     ) {
@@ -780,13 +790,7 @@ fun SetupContent(modifier: Modifier = Modifier, notes: List<Note>, userPreferenc
                         onClick = { 
                             scope.launch {
                                 isSyncing = true
-                                if (currentUser == null) {
-                                    val success = authManager.signInWithGoogle()
-                                    if (success) {
-                                        onAuthChange()
-                                        showUploadDialog = true
-                                    }
-                                } else {
+                                if (currentUser == null) { onNavigateToAuth() } else {
                                     showUploadDialog = true
                                 }
                                 isSyncing = false

@@ -11,14 +11,13 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.tasks.await
-
 import java.security.MessageDigest
 import java.util.UUID
 
 class AuthManager(private val context: Context) {
     private val auth by lazy { FirebaseAuth.getInstance() }
     private val credentialManager by lazy { CredentialManager.create(context) }
-
+    
     private val serverClientId: String by lazy {
         val resId = context.resources.getIdentifier("default_web_client_id", "string", context.packageName)
         if (resId != 0) {
@@ -34,11 +33,47 @@ class AuthManager(private val context: Context) {
         } catch (e: Exception) {
             null
         }
+        
+    suspend fun checkEmailExists(email: String): Boolean {
+        return try {
+            val result = auth.fetchSignInMethodsForEmail(email).await()
+            !result.signInMethods.isNullOrEmpty()
+        } catch (e: Exception) {
+            Log.e("AuthManager", "checkEmailExists failed", e)
+            false // Default to signup if check fails
+        }
+    }
+    
+    suspend fun signInWithEmail(email: String, password: String): AuthResult {
+        return try {
+            auth.signInWithEmailAndPassword(email, password).await()
+            AuthResult.Success
+        } catch (e: Exception) {
+            AuthResult.Error(e.localizedMessage ?: "Sign in failed")
+        }
+    }
+    
+    suspend fun signUpWithEmail(email: String, password: String): AuthResult {
+        return try {
+            auth.createUserWithEmailAndPassword(email, password).await()
+            AuthResult.Success
+        } catch (e: Exception) {
+            AuthResult.Error(e.localizedMessage ?: "Sign up failed")
+        }
+    }
+    
+    suspend fun resetPassword(email: String): AuthResult {
+        return try {
+            auth.sendPasswordResetEmail(email).await()
+            AuthResult.Success
+        } catch (e: Exception) {
+            AuthResult.Error(e.localizedMessage ?: "Failed to send reset email")
+        }
+    }
 
     suspend fun signInWithGoogle(): Boolean {
         if (serverClientId == "YOUR_WEB_CLIENT_ID") {
             Log.e("AuthManager", "Please configure Google Sign-In in Firebase Console and download the updated google-services.json to get the Web Client ID.")
-            // Proceed anyway to let it fail naturally or succeed if somehow they override it.
         }
 
         val rawNonce = UUID.randomUUID().toString()

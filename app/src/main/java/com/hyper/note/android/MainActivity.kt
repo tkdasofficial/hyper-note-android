@@ -24,6 +24,7 @@ import com.hyper.note.android.ui.NoteViewModelFactory
 import com.hyper.note.android.ui.theme.MyApplicationTheme
 
 import com.hyper.note.android.auth.AuthManager
+import com.hyper.note.android.ui.AuthScreen
 
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,11 +66,24 @@ class MainActivity : FragmentActivity() {
                     } else {
                         val navController = rememberNavController()
                         NavHost(navController = navController, startDestination = "home") {
+                        composable("auth") {
+                            AuthScreen(
+                                authManager = authManager,
+                                onAuthSuccess = {
+                                    navController.popBackStack()
+                                },
+                                onBack = {
+                                    navController.popBackStack()
+                                }
+                            )
+                        }
+
                         composable("home") {
                             HomeScreen(
                                 notes = notes,
                                 userPreferences = userPreferences,
                                 authManager = authManager,
+                                onNavigateToAuth = { navController.navigate("auth") },
                                 onAddNote = {
                                     navController.navigate("note_detail/-1")
                                 },
