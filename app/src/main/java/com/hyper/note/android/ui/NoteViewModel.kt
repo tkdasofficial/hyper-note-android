@@ -1,10 +1,10 @@
-package com.example.ui
+package com.hyper.note.android.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.data.Note
-import com.example.data.NoteRepository
+import com.hyper.note.android.data.Note
+import com.hyper.note.android.data.NoteRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn

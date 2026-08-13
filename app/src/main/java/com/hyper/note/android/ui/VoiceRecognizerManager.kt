@@ -1,4 +1,4 @@
-package com.example.ui
+package com.hyper.note.android.ui
 
 import android.content.Context
 import android.content.Intent

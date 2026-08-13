@@ -1,4 +1,4 @@
-package com.example
+package com.hyper.note.android
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider

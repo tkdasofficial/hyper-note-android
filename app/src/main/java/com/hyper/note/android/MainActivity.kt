@@ -1,4 +1,4 @@
-package com.example
+package com.hyper.note.android
 
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
@@ -17,20 +17,20 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.ui.HomeScreen
-import com.example.ui.NoteDetailScreen
-import com.example.ui.NoteViewModel
-import com.example.ui.NoteViewModelFactory
-import com.example.ui.theme.MyApplicationTheme
+import com.hyper.note.android.ui.HomeScreen
+import com.hyper.note.android.ui.NoteDetailScreen
+import com.hyper.note.android.ui.NoteViewModel
+import com.hyper.note.android.ui.NoteViewModelFactory
+import com.hyper.note.android.ui.theme.MyApplicationTheme
 
-import com.example.auth.AuthManager
+import com.hyper.note.android.auth.AuthManager
 
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         
-        val app = application as EliteNotebookApplication
+        val app = application as HyperNotebookApplication
         val viewModelFactory = NoteViewModelFactory(app.repository)
         val userPreferences = app.userPreferences
         
@@ -52,7 +52,7 @@ class MainActivity : FragmentActivity() {
                     var isUnlocked by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
 
                     if (appSecurityEnabled && !isUnlocked) {
-                        com.example.ui.AppLockScreen(
+                        com.hyper.note.android.ui.AppLockScreen(
                             correctPin = encryptionKey,
                             enableBiometrics = enableBiometrics,
                             isAuthenticated = authManager.currentUser != null,

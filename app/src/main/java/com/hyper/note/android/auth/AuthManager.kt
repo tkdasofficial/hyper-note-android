@@ -1,4 +1,4 @@
-package com.example.auth
+package com.hyper.note.android.auth
 
 import android.content.Context
 import android.util.Log
@@ -6,11 +6,14 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.tasks.await
+
+import java.security.MessageDigest
+import java.util.UUID
 
 class AuthManager(private val context: Context) {
     private val auth by lazy { FirebaseAuth.getInstance() }
@@ -38,9 +41,14 @@ class AuthManager(private val context: Context) {
             // Proceed anyway to let it fail naturally or succeed if somehow they override it.
         }
 
-        val googleIdOption = GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(false)
-            .setServerClientId(serverClientId)
+        val rawNonce = UUID.randomUUID().toString()
+        val bytes = rawNonce.toByteArray()
+        val md = MessageDigest.getInstance("SHA-256")
+        val digest = md.digest(bytes)
+        val hashedNonce = digest.joinToString("") { "%02x".format(it) }
+
+        val googleIdOption = GetSignInWithGoogleOption.Builder(serverClientId)
+            .setNonce(hashedNonce)
             .build()
 
         val request = GetCredentialRequest.Builder()
@@ -65,9 +73,11 @@ class AuthManager(private val context: Context) {
             }
         } catch (e: GetCredentialException) {
             e.printStackTrace()
+            Log.e("AuthManager", "GetCredentialException: ${e.message}", e)
             false
         } catch (e: Exception) {
             e.printStackTrace()
+            Log.e("AuthManager", "Exception: ${e.message}", e)
             false
         }
     }

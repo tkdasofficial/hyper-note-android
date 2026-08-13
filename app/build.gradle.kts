@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-  namespace = "com.example"
+  namespace = "com.hyper.note.android"
   compileSdk { version = release(36) { minorApiLevel = 1 } }
 
   lint {

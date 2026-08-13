@@ -1,4 +1,4 @@
-package com.example
+package com.hyper.note.android
 
 import org.junit.Assert.*
 import org.junit.Test

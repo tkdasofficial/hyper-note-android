@@ -1,6 +1,6 @@
-package com.example.data
+package com.hyper.note.android.data
 
-import com.example.security.CryptoManager
+import com.hyper.note.android.security.CryptoManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

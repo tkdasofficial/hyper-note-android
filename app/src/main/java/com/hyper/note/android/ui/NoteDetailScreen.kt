@@ -1,4 +1,4 @@
-package com.example.ui
+package com.hyper.note.android.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -19,9 +19,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.data.Note
+import com.hyper.note.android.data.Note
 import androidx.compose.ui.platform.LocalContext
-import com.example.ui.VoiceRecognizerManager
+import com.hyper.note.android.ui.VoiceRecognizerManager
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState

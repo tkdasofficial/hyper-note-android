@@ -1,4 +1,4 @@
-package com.example.ui
+package com.hyper.note.android.ui
 
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
@@ -207,7 +207,7 @@ fun AppLockScreen(
                         )
 
                         val promptInfo = BiometricPrompt.PromptInfo.Builder()
-                            .setTitle("Unlock Elite Notebook")
+                            .setTitle("Unlock Hyper Notebook")
                             .setSubtitle("Authenticate using your biometric credential")
                             .setNegativeButtonText("Use PIN")
                             .build()

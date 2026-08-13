@@ -1,4 +1,4 @@
-package com.example.data
+package com.hyper.note.android.data
 
 import android.content.Context
 import android.content.SharedPreferences

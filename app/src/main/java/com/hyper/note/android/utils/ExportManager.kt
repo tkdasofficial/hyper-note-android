@@ -1,4 +1,4 @@
-package com.example.utils
+package com.hyper.note.android.utils
 
 import android.content.ContentValues
 import android.content.Context
@@ -8,7 +8,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Toast
-import com.example.data.Note
+import com.hyper.note.android.data.Note
 import java.io.OutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream

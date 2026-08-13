@@ -1,4 +1,4 @@
-package com.example.ui
+package com.hyper.note.android.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,13 +33,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.data.Note
-import com.example.data.UserPreferences
+import com.hyper.note.android.data.Note
+import com.hyper.note.android.data.UserPreferences
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-import com.example.auth.AuthManager
+import com.hyper.note.android.auth.AuthManager
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -451,7 +451,7 @@ fun VaultContent(
     notes: List<Note>,
     searchQuery: String,
     selectedFilter: String,
-    userPreferences: com.example.data.UserPreferences,
+    userPreferences: com.hyper.note.android.data.UserPreferences,
     authManager: AuthManager,
     onNoteClick: (Note) -> Unit,
     modifier: Modifier = Modifier,
@@ -845,9 +845,9 @@ fun SetupContent(modifier: Modifier = Modifier, notes: List<Note>, userPreferenc
             onDismiss = { showExportDialog = false },
             onConfirm = { selected ->
                 if (selected.size == 1) {
-                    com.example.utils.ExportManager.exportAsPdf(context, selected.first())
+                    com.hyper.note.android.utils.ExportManager.exportAsPdf(context, selected.first())
                 } else {
-                    com.example.utils.ExportManager.exportAsZip(context, selected)
+                    com.hyper.note.android.utils.ExportManager.exportAsZip(context, selected)
                 }
                 showExportDialog = false
             }
@@ -857,13 +857,13 @@ fun SetupContent(modifier: Modifier = Modifier, notes: List<Note>, userPreferenc
 
 @Composable
 fun NoteSelectionDialog(
-    notes: List<com.example.data.Note>,
+    notes: List<com.hyper.note.android.data.Note>,
     title: String,
     actionText: String,
     onDismiss: () -> Unit,
-    onConfirm: (List<com.example.data.Note>) -> Unit
+    onConfirm: (List<com.hyper.note.android.data.Note>) -> Unit
 ) {
-    var selectedNotes by remember { mutableStateOf(setOf<com.example.data.Note>()) }
+    var selectedNotes by remember { mutableStateOf(setOf<com.hyper.note.android.data.Note>()) }
 
     AlertDialog(
         onDismissRequest = onDismiss,

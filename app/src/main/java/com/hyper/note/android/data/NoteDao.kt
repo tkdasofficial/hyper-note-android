@@ -1,4 +1,4 @@
-package com.example.data
+package com.hyper.note.android.data
 
 import androidx.room.Dao
 import androidx.room.Delete
