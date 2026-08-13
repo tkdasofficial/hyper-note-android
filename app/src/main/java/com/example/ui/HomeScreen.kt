@@ -223,7 +223,8 @@ fun HomeScreen(
                     userPreferences = userPreferences,
                     authManager = authManager,
                     onNoteClick = onNoteClick,
-                    modifier = Modifier.padding(paddingValues)
+                    modifier = Modifier.padding(paddingValues),
+                    onAuthChange = { currentUser = authManager.currentUser }
                 )
             }
             "Setup" -> {
@@ -453,7 +454,8 @@ fun VaultContent(
     userPreferences: com.example.data.UserPreferences,
     authManager: AuthManager,
     onNoteClick: (Note) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onAuthChange: () -> Unit
 ) {
     var unlocked by remember { mutableStateOf(false) }
     val encryptionKey by userPreferences.encryptionKey.collectAsState()
@@ -480,6 +482,7 @@ fun VaultContent(
                         val success = authManager.signInWithGoogle()
                         if (success) {
                             isAuthenticated = true
+                            onAuthChange()
                         }
                         isAuthenticating = false
                     }
