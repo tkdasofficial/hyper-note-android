@@ -1,0 +1,6 @@
+{
+  "name": "Hyper Note",
+  "description": "Advanced offline note app with encrypted storage, offline voice typing, and rich text formatting.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
